@@ -19,6 +19,9 @@ public:
     Stable_Matcher(int num_prefs_in, int num_matches_in)
         : num_prefs(num_prefs_in), num_matches(num_matches_in) {}
     
+    int get_num_prefs () {
+        return num_prefs;
+    }
     
     string m_highest_pref (string &man) {
         // man proposes to his highest preference
@@ -116,6 +119,48 @@ public:
         }
     }
     
+    void read_in_names (string sex, map<string,map<string,int>> &pref_map) {
+        // for each match, read in the name
+        // create a map for that person
+        for (int i = 1; i <= num_matches; ++i) {
+            string name = "";
+            cout << "Name of " << sex << " #" << i << ": ";
+            cin >> name;
+            map<string, int> single_pref_map;
+            // add the map to the pref map
+            pref_map[name] = single_pref_map;
+        }
+        cout << endl;
+    }
+    
+    void read_in_ranks (map<string, map<string,int>> &pref_map) {
+        // read in that persons preferences
+        // add the name and rank of their preferences to the map
+        for (const auto &key_value : pref_map) {
+            string name = key_value.first;
+            string pref = "";
+            for (int i = 1; i <= num_prefs; ++i) {
+                cout << "Enter " << name << "\'s #" << i << " preference: ";
+                cin >> pref;
+                // add to that person's pref map
+                pref_map[name].insert({pref, i});
+            }
+            if (num_prefs > 2) cout << endl;
+        }
+        cout << endl;
+    }
+    
+    void init_single_M_and_W () {
+        // loop through the pref maps to get the name of each man and woman
+        // push back into single vector
+        for (const auto &key_value : m_pref) {
+            single_m.push_back(key_value.first);
+        }
+        for (const auto &key_value : w_pref) {
+            single_w.push_back(key_value.first);
+        }
+    }
+    
     void print_proposals () {
         cout << "-----------------------------------" << endl;
         cout << "Final Engagements:" << endl << endl;
@@ -127,11 +172,11 @@ public:
     
     void store_pref () {
         cout << "Please enter participants" << endl;
-        read_in_names("man");
-        read_in_names("woman");
+        read_in_names("man", m_pref);
+        read_in_names("woman", w_pref);
         cout << "Please enter preferences" << endl;
-        read_in_M_ranks();
-        read_in_W_ranks();
+        read_in_ranks(m_pref);
+        read_in_ranks(w_pref);
         init_single_M_and_W();
     }
     
@@ -147,118 +192,6 @@ public:
     void stable_match () {
         store_pref();
         make_pairings();
-    }
-    
-    void unequal_match () {
-        store_pref();
-        store_unlisted_prefs();
-        make_pairings();
-    }
-    
-    void read_in_names (string sex) {
-        // for each match, read in the name
-        // create a map for that person
-        for (int i = 1; i <= num_matches; ++i) {
-            string name = "";
-            cout << "Name of " << sex << " #" << i << ": ";
-            cin >> name;
-            map<string, int> single_pref_map;
-            // add the map to the pref map
-            if (sex == "man") {
-                m_pref[name] = single_pref_map;
-            }
-            else {
-                w_pref[name] = single_pref_map;
-            }
-        }
-        cout << endl;
-    }
-    
-    void read_in_M_ranks () {
-        // read in that persons preferences
-        // add the name and rank of their preferences to the map
-        for (const auto &key_value : m_pref) {
-            string name = key_value.first;
-            string pref = "";
-            for (int i = 1; i <= num_prefs; ++i) {
-                cout << "Enter " << name << "\'s #" << i << " preference: ";
-                cin >> pref;
-                // add to that person's pref map
-                m_pref[name].insert({pref, i});
-            }
-            cout << endl;
-        }
-    }
-    
-    void read_in_W_ranks () {
-        // read in that persons preferences
-        // add the name and rank of their preferences to the map
-        for (const auto &key_value : w_pref) {
-            string name = key_value.first;
-            string pref = "";
-            for (int i = 1; i <= num_prefs; ++i) {
-                cout << "Enter " << name << "\'s #" << i << " preference: ";
-                cin >> pref;
-                // add to that person's pref map
-                w_pref[name].insert({pref, i});
-            }
-            cout << endl;
-        }
-        cout << endl;
-    }
-
-    void store_unlisted_M_prefs () {
-        // for each man
-        for (const auto &key_value : m_pref) {
-            int count = num_prefs + 1;
-            string man = key_value.first;
-            // lop through the list of woman's names
-            for (const auto &key_value2 : w_pref) {
-                string woman_name = key_value2.first;
-                // if the man didnt already have that woman in his prefs
-                if (m_pref[man].find(woman_name) == m_pref[man].end()) {
-                    // add the woman to their prefs
-                    m_pref[man].insert({woman_name, count});
-                    ++count;
-                }
-            }
-        }
-    }
-    
-    void store_unlisted_W_prefs() {
-        // for each woman
-        for (const auto &key_value : w_pref) {
-            int count = num_prefs + 1;
-            string woman = key_value.first;
-            // loop through the list of men's names
-            for (const auto &key_value2 : m_pref) {
-                string man_name = key_value2.first;
-                // if the woman didnt already have that man in her prefs
-                if (w_pref[woman].find(man_name) == w_pref[woman].end()) {
-                    // add the man to their prefs
-                    w_pref[woman].insert({man_name, count});
-                    ++count;
-                }
-            }
-        }
-    }
-    
-    // if there are 20 pairs and only 5 preferences given, fills the other
-    // 15 preferences in alphabetical order.
-    void store_unlisted_prefs() {
-        store_unlisted_M_prefs();
-        store_unlisted_W_prefs();
-    }
-    
-    void init_single_M_and_W () {
-        // loop through the pref maps to get the name of each man and woman
-        // push back into single vector
-        for (const auto &key_value : m_pref) {
-            single_m.push_back(key_value.first);
-        }
-        for (const auto &key_value : w_pref) {
-            single_w.push_back(key_value.first);
-        }
     }
     
     void tests_run () {
@@ -324,7 +257,7 @@ public:
         make_pairings();
     }
     
-private:
+protected:
     
     int num_prefs;
     int num_matches;
@@ -341,8 +274,47 @@ private:
 };
 
 
+class Incomplete_Matcher : public Stable_Matcher {
+public:
+    
+    Incomplete_Matcher (int num_prefs_in, int num_matches_in)
+        : Stable_Matcher(num_prefs_in, num_matches_in) {}
+    
+    
+    // if there are 20 pairs and only 5 preferences given, fills the other
+    // 15 preferences in alphabetical order.
+    void store_unlisted_prefs (map<string, map<string,int>> &pref_map1,
+                               map<string, map<string, int>> &pref_map2) {
+        // for each man or woman
+        for (const auto &key_value : pref_map1) {
+            int count = get_num_prefs() + 1;
+            string person = key_value.first;
+            // lop through the list of opposite sex names
+            for (const auto &key_value2 : pref_map2) {
+                string match_name = key_value2.first;
+                // if the person didnt already have that name in his prefs
+                if (pref_map1[person].find(match_name) ==
+                                        pref_map1[person].end()) {
+                    // add the woman to their prefs
+                    pref_map1[person].insert({match_name, count});
+                    ++count;
+                }
+            }
+        }
+    }
+
+    void incomplete_match () {
+        store_pref();
+        store_unlisted_prefs(m_pref, w_pref);
+        store_unlisted_prefs(w_pref, m_pref);
+        make_pairings();
+    }
+    
+};
+
+
 void print_error_message() {
-    cout << "Usage: main.exe NUM_MATCHES NUM_PREFS [test]" << endl;
+    cout << "Usage: main.exe NUM_PREFS NUM_MATCHES [test]" << endl;
     cout << endl;
     cout << "NUM_MATCHES and NUM_PREFS must be at least 1" << endl;
     cout << "If testing, NUM_MATCHES and NUM_PREFS must both be 4" << endl;
@@ -385,7 +357,8 @@ int main(int argc, const char * argv[]) {
         }
         // unequal number of men and women, add exta prefs
         else {
-            match.unequal_match();
+            Incomplete_Matcher match(prefs, matches);
+            match.incomplete_match();
         }
     }
     return 0;
