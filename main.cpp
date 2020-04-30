@@ -273,7 +273,6 @@ protected:
     
 };
 
-
 class Incomplete_Pref_Matcher : public Stable_Matcher {
 public:
     
@@ -312,6 +311,14 @@ public:
     
 };
 
+// NOTE: The big little program relies on big and little preferences where
+// every little will get paired with someone on in their top 5.
+// Unlisted preferences are NOT stored to preserve speed and space.
+
+// NOTE: Every little will get 1 big but if there are more bigs than littles
+// every big might not get a little. The program also does not allow for
+// littles to share the same big
+
 class Big_Little_Matcher : public Stable_Matcher {
 public:
     
@@ -348,10 +355,6 @@ public:
         read_in_ranks(w_pref);
         init_single_M_and_W();
     }
-    
-    // NOTE: The big little program relies on big and little preferences where
-    // every little will get paired with someone on in their top 5.
-    // Unlisted preferences are NOT stored to preserve speed and space.
     
     void big_little_match () {
         prompt_num_bigs_and_littles();
