@@ -52,7 +52,7 @@ public:
         engagements[w_proposed_to] = m_proposing;
         cout << m_proposing << " proposes to " << w_proposed_to << "." << endl;
         cout << w_proposed_to << " is single so she accepts." << endl;
-        cout << m_proposing << " and " << w_proposed_to << " get engaged."
+        cout << m_proposing << " and " << w_proposed_to << " get matched."
                 << endl;
     }
     
@@ -94,7 +94,7 @@ public:
         // new m removed from single vector
         auto it = find(single_m.begin(), single_m.end(), m_proposing);
         single_m.erase(it);
-        cout << m_proposing << " and " << woman << " get engaged." << endl;
+        cout << m_proposing << " and " << woman << " get matched." << endl;
         // current m added
         single_m.push_back(current_m);
         cout << current_m << " becomes single again." << endl;
@@ -119,7 +119,8 @@ public:
         }
     }
     
-    void read_in_names (string sex, map<string,map<string,int>> &pref_map, int matches) {
+    void read_in_names (string sex, map<string,map<string,int>> &pref_map,
+                                                                int matches) {
         // for each match, read in the name
         // create a map for that person
         for (int i = 1; i <= matches; ++i) {
@@ -163,7 +164,7 @@ public:
     
     void print_proposals () {
         cout << "-----------------------------------" << endl;
-        cout << "Final Engagements:" << endl << endl;
+        cout << "Final Matches:" << endl << endl;
         for (const auto &key_value : engagements) {
             cout << key_value.first << " and " << key_value.second << endl;
         }
@@ -278,7 +279,6 @@ public:
     
     Incomplete_Pref_Matcher (int num_prefs_in, int num_matches_in)
         : Stable_Matcher(num_prefs_in, num_matches_in) {}
-    
     
     // if there are 20 pairs and only 5 preferences given, fills the other
     // 15 preferences in alphabetical order.
