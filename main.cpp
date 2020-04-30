@@ -119,10 +119,10 @@ public:
         }
     }
     
-    void read_in_names (string sex, map<string,map<string,int>> &pref_map) {
+    void read_in_names (string sex, map<string,map<string,int>> &pref_map, int matches) {
         // for each match, read in the name
         // create a map for that person
-        for (int i = 1; i <= num_matches; ++i) {
+        for (int i = 1; i <= matches; ++i) {
             string name = "";
             cout << "Name of " << sex << " #" << i << ": ";
             cin >> name;
@@ -172,8 +172,8 @@ public:
     
     void store_pref () {
         cout << "Please enter participants" << endl;
-        read_in_names("man", m_pref);
-        read_in_names("woman", w_pref);
+        read_in_names("man", m_pref, num_matches);
+        read_in_names("woman", w_pref, num_matches);
         cout << "Please enter preferences" << endl;
         read_in_ranks(m_pref);
         read_in_ranks(w_pref);
@@ -274,10 +274,10 @@ protected:
 };
 
 
-class Incomplete_Matcher : public Stable_Matcher {
+class Incomplete_Pref_Matcher : public Stable_Matcher {
 public:
     
-    Incomplete_Matcher (int num_prefs_in, int num_matches_in)
+    Incomplete_Pref_Matcher (int num_prefs_in, int num_matches_in)
         : Stable_Matcher(num_prefs_in, num_matches_in) {}
     
     
@@ -312,53 +312,131 @@ public:
     
 };
 
+class Big_Little_Matcher : public Stable_Matcher {
+public:
+    
+    // Bigs function as women, little function as men
+    // default initialized to 0, later set to user input
+    Big_Little_Matcher (int num_prefs_in, int num_matches_in)
+        : Stable_Matcher(num_prefs_in, num_matches_in), num_bigs(0),
+            num_littles(0) {}
+    
+    void set_bigs (int x) { num_bigs = x; }
+    
+    void set_littles (int x) { num_littles = x; }
+    
+    void prompt_num_bigs_and_littles () {
+        int bigs_in;
+        cout << "Please enter the number of bigs: ";
+        cin >> bigs_in;
+        set_bigs(bigs_in);
+        
+        int littles_in;
+        cout << "Please enter the number of littles: ";
+        cin >> littles_in;
+        cout << endl;
+        set_littles(littles_in);
+    }
+    
+    void store_unequal_pref () {
+        // read in names for every big and for every little
+        cout << "Please enter participants" << endl;
+        read_in_names("little", m_pref, num_littles);
+        read_in_names("big", w_pref, num_bigs);
+        cout << "Please enter preferences" << endl;
+        read_in_ranks(m_pref);
+        read_in_ranks(w_pref);
+        init_single_M_and_W();
+    }
+    
+    // NOTE: The big little program relies on big and little preferences where
+    // every little will get paired with someone on in their top 5.
+    // Unlisted preferences are NOT stored to preserve speed and space.
+    
+    void big_little_match () {
+        prompt_num_bigs_and_littles();
+        store_unequal_pref();
+        make_pairings();
+    }
+    
+private:
+    // variables to keep track of number of bigs and littles when
+    // there are more bigs than littles
+    int num_bigs; // W
+    int num_littles; // M
+};
 
-void print_error_message() {
-    cout << "Usage: main.exe NUM_PREFS NUM_MATCHES [test]" << endl;
+
+int menu_prompt () {
+    cout << "Welcome to the Stable Matching Program!" << endl;
     cout << endl;
-    cout << "NUM_MATCHES and NUM_PREFS must be at least 1" << endl;
-    cout << "If testing, NUM_MATCHES and NUM_PREFS must both be 4" << endl;
+    cout << "To test the program, please enter 1" << endl;
+    cout << "To run the program, please enter 2" << endl;
+    cout << "Choice: ";
+    
+    int choice = 0;
+    cin >> choice;
+    cout << endl;
+    return choice;
 }
 
-// command line arguments:
-// executable, number of preferences, number of matches, test
-// if test is provided, use testing data
-int main(int argc, const char * argv[]) {
+int program_prompt() {
+    cout << "For classic stable matching with 2 equal size groups and " << endl;
+    cout << "each person ranks their preference for every member of" << endl;
+    cout << "the other group," << " please enter 1" << endl << endl;
+    
+    cout << "For incomplete preference matching with 2 equal size " << endl;
+    cout << "groups but each person only provides a few preferences, " << endl;
+    cout << "please enter 2" << endl << endl;
+    
+    cout << "For big little matching with groups of unequal size and " << endl;
+    cout << "only a few preferences, please enter 3" << endl << endl;
+    
+    cout << "Choice: ";
+    int choice = 0;
+    cin >> choice;
+    cout << endl;
+    return choice;
+}
 
-    // incorrect number of arguments or invalid number of matches/prefs
-    if ((argc != 3 && argc != 4) || atoi(argv[1]) < 1 || atoi(argv[2]) < 1) {
-        print_error_message();
-        return 1;
-    }
-    // incorrect test argument provided
-    if (argc == 4 && (string(argv[3]) != "test")) {
-        print_error_message();
-        return 1;
-    }
-    // testing with an incorrect number of matches/prefs
-    if (argc == 4 && (string(argv[1]) != "4" || string(argv[2]) != "4")) {
-        print_error_message();
-        return 1;
-    }
+int main(int argc, const char * argv[]) {
     
-    int prefs = atoi(argv[1]);
-    int matches = atoi(argv[2]);
-    Stable_Matcher match(prefs, matches);
+    int prefs = 0;
+    int matches = 0;
     
-    // if test provided, use tests data
-    if (argc == 4) {
-        match.tests_run();
+    int menu_choice = menu_prompt();
+    // test program
+    if (menu_choice == 1) {
+        Stable_Matcher test(4, 4);
+        test.tests_run();
     }
-    // otherwise use user input
+    // run program
     else {
-        // normal stable matching algorithm
-        if (prefs == matches) {
+        int p_choice = program_prompt();
+        if (p_choice == 1) {
+            cout << "Enter number of matches and preferences: ";
+            cin >> matches;
+            cout << endl;
+            Stable_Matcher match(matches, matches);
             match.stable_match();
         }
-        // unequal number of men and women, add exta prefs
-        else {
-            Incomplete_Matcher match(prefs, matches);
+        else if (p_choice == 2) {
+            cout << "Enter number of preferences: ";
+            cin >> prefs;
+            cout << "Enter number of matches: ";
+            cin >> matches;
+            cout << endl;
+            Incomplete_Pref_Matcher match(prefs, matches);
             match.incomplete_match();
+        }
+        else if (p_choice == 3) {
+            cout << "Enter number of preferences: ";
+            cin >> prefs;
+            cout << "Enter number of matches: ";
+            cin >> matches;
+            cout << endl;
+            Big_Little_Matcher match(prefs, matches);
+            match.big_little_match();
         }
     }
     return 0;
