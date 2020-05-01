@@ -13,7 +13,7 @@ have to rank everyone. It then autofills the remaining preferences alphabeticall
 
 The second modified version is intended for fraternity and sorority big little pairings. 
 It allows for the number of preferences given to be less than the number of matches. 
-However, it does not autofill the remaining preferenes, assuming  enough variation in little's 
+However, it does not autofill the remaining preferences, assuming  enough variation in little's 
 preference lists that every little will be paired with someone on their list. It also allows for 
 uneven groups, in the case there are more bigs than littles.
 
