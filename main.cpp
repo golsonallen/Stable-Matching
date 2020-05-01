@@ -51,7 +51,7 @@ public:
         // add pair to engagements
         engagements[w_proposed_to] = m_proposing;
         cout << m_proposing << " proposes to " << w_proposed_to << "." << endl;
-        cout << w_proposed_to << " is single so she accepts." << endl;
+        cout << w_proposed_to << " is single and accepts." << endl;
         cout << m_proposing << " and " << w_proposed_to << " get matched."
                 << endl;
     }
@@ -134,19 +134,19 @@ public:
         cout << endl;
     }
     
-    void read_in_ranks (map<string, map<string,int>> &pref_map) {
+    void read_in_ranks (map<string, map<string,int>> &pref_map, int prefs) {
         // read in that persons preferences
         // add the name and rank of their preferences to the map
         for (const auto &key_value : pref_map) {
             string name = key_value.first;
             string pref = "";
-            for (int i = 1; i <= num_prefs; ++i) {
+            for (int i = 1; i <= prefs; ++i) {
                 cout << "Enter " << name << "\'s #" << i << " preference: ";
                 cin >> pref;
                 // add to that person's pref map
                 pref_map[name].insert({pref, i});
             }
-            if (num_prefs > 2) cout << endl;
+            if (prefs > 2) cout << endl;
         }
         cout << endl;
     }
@@ -176,8 +176,8 @@ public:
         read_in_names("man", m_pref, num_matches);
         read_in_names("woman", w_pref, num_matches);
         cout << "Please enter preferences" << endl;
-        read_in_ranks(m_pref);
-        read_in_ranks(w_pref);
+        read_in_ranks(m_pref, num_prefs);
+        read_in_ranks(w_pref, num_prefs);
         init_single_M_and_W();
     }
     
@@ -280,8 +280,9 @@ public:
     Incomplete_Pref_Matcher (int num_prefs_in, int num_matches_in)
         : Stable_Matcher(num_prefs_in, num_matches_in) {}
     
-    // if there are 20 pairs and only 5 preferences given, fills the other
-    // 15 preferences in alphabetical order.
+    // if there are 4 pairs and only 2 preferences given, fills the other
+    // 2 preferences in alphabetical order.
+    // intended for smaller groups
     void store_unlisted_prefs (map<string, map<string,int>> &pref_map1,
                                map<string, map<string, int>> &pref_map2) {
         // for each man or woman
@@ -351,8 +352,16 @@ public:
         read_in_names("little", m_pref, num_littles);
         read_in_names("big", w_pref, num_bigs);
         cout << "Please enter preferences" << endl;
-        read_in_ranks(m_pref);
-        read_in_ranks(w_pref);
+        read_in_ranks(m_pref, num_prefs);
+        // if for some reason there are more preferences than littles, bigs
+        // will enter a preferences for each little
+        // avoids the case of bigs giving 3 preferences for only 2 littles
+        if (num_littles < num_prefs) {
+            read_in_ranks(w_pref, num_littles);
+        }
+        else {
+            read_in_ranks(w_pref, num_prefs);
+        }
         init_single_M_and_W();
     }
     
