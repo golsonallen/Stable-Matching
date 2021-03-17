@@ -201,29 +201,29 @@ public:
         map<string, int> Griffin;
         Griffin["Caroline"] = 1;
         Griffin["Katie"] = 2;
-        Griffin["Ronnie"] = 3;
-        Griffin["Siobhan"] = 4;
+        Griffin["Mary"] = 3;
+        Griffin["Jane"] = 4;
         m_pref["Griffin"] = Griffin;
         
         map<string, int> Joey;
         Joey["Katie"] = 1;
         Joey["Caroline"] = 2;
-        Joey["Ronnie"] = 3;
-        Joey["Siobhan"] = 4;
+        Joey["Mary"] = 3;
+        Joey["Jane"] = 4;
         m_pref["Joey"] = Joey;
         
         map<string, int> Scott;
         Scott["Katie"] = 1;
         Scott["Caroline"] = 2;
-        Scott["Siobhan"] = 3;
-        Scott["Ronnie"] = 4;
+        Scott["Jane"] = 3;
+        Scott["Mary"] = 4;
         m_pref["Scott"] = Scott;
         
         map<string, int> Dean;
         Dean["Caroline"] = 1;
         Dean["Katie"] = 2;
-        Dean["Siobhan"] = 3;
-        Dean["Ronnie"] = 4;
+        Dean["Jane"] = 3;
+        Dean["Mary"] = 4;
         m_pref["Dean"] = Dean;
                 
         map<string, int> Caroline;
@@ -240,19 +240,19 @@ public:
         Katie["Dean"] = 4;
         w_pref["Katie"] = Katie;
         
-        map<string, int> Ronnie;
-        Ronnie["Scott"] = 1;
-        Ronnie["Griffin"] = 2;
-        Ronnie["Dean"] = 3;
-        Ronnie["Joey"] = 4;
-        w_pref["Ronnie"] = Ronnie;
+        map<string, int> Mary;
+        Mary["Scott"] = 1;
+        Mary["Griffin"] = 2;
+        Mary["Dean"] = 3;
+        Mary["Joey"] = 4;
+        w_pref["Mary"] = Mary;
         
-        map<string, int> Siobhan;
-        Siobhan["Scott"] = 1;
-        Siobhan["Dean"] = 2;
-        Siobhan["Griffin"] = 3;
-        Siobhan["Joey"] = 4;
-        w_pref["Siobhan"] = Siobhan;
+        map<string, int> Jane;
+        Jane["Scott"] = 1;
+        Jane["Dean"] = 2;
+        Jane["Griffin"] = 3;
+        Jane["Joey"] = 4;
+        w_pref["Jane"] = Jane;
         
         init_single_M_and_W();
         make_pairings();
